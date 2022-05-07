@@ -12,19 +12,18 @@ import (
 
 var ttrss_api_endpoint string
 var session_id string
+var username string
+var password string
 
 func main() {
-	user := os.Args[1]
-	password := os.Args[2]
+	username = os.Args[1]
+	password = os.Args[2]
 	ttrss_api_endpoint = os.Args[3]
-	session_id = login(user, password)
-	isLoggedIn := isLoggedIn(session_id)
-	if isLoggedIn {
-		fmt.Println("true")
-	} else {
-		fmt.Println("false")
-	}
+
+	session_id = login(username, password)
+
 	apiLevel := getApiLevel(session_id)
+
 	fmt.Println(apiLevel)
 }
 
@@ -79,7 +78,12 @@ func isLoggedIn(sid string) (isLoggedIn bool) {
 }
 
 func getApiLevel(session_id string) (currentApiLevel int) {
+	if !isLoggedIn(session_id) {
+		login(username, password)
+	}
+
 	values := map[string]string{"op": "getApiLevel", "sid": session_id}
+
 	body := requestApi(values)
 
 	apiLevel := ApiLevel{}
