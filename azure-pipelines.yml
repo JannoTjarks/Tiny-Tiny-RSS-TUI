@@ -20,6 +20,7 @@ steps:
     cliProjectName: 'Tiny Tiny RSS TUI'
     cliSources: '.'
     extraProperties: |
+      sonar.sources=.
       sonar.exclusions=**/*_test.go,**/vendor/**
       sonar.tests=.
       sonar.test.inclusions=**/*_test.go
