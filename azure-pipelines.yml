@@ -21,9 +21,8 @@ steps:
     cliSources: '.'
     extraProperties: |
       sonar.exclusions=**/*_test.go
-      
-        sonar.tests=.
-        sonar.test.inclusions=**/*_test.go
+      sonar.tests=.
+      sonar.test.inclusions=**/*_test.go
 
 - script: |
     go version
