@@ -31,4 +31,9 @@ steps:
     go get -v -t -d ./...
     go build -v .  
   displayName: 'Get dependencies, then build'
+
+- script: |
+    ls -la /home/vsts/work/1/s/
+  displayName: 'Show work folder'
 - task: SonarCloudAnalyze@1
+
