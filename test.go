@@ -24,6 +24,8 @@ func main() {
 	} else {
 		fmt.Println("false")
 	}
+	apiLevel := getApiLevel(session_id)
+	fmt.Println(apiLevel)
 }
 
 func requestApi(values map[string]string) (responseBody []byte) {
@@ -76,6 +78,21 @@ func isLoggedIn(sid string) (isLoggedIn bool) {
 	return
 }
 
+func getApiLevel(session_id string) (currentApiLevel int) {
+	values := map[string]string{"op": "getApiLevel", "sid": session_id}
+	body := requestApi(values)
+
+	apiLevel := ApiLevel{}
+	err := json.Unmarshal(body, &apiLevel)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	currentApiLevel = apiLevel.Content.Level
+	return
+}
+
 type LoginResponse struct {
 	Seq     int `json:"seq"`
 	Status  int `json:"status"`
@@ -97,5 +114,13 @@ type LogInfo struct {
 	Status  int `json:"status"`
 	Content struct {
 		Status bool `json:"status"`
+	} `json:"content"`
+}
+
+type ApiLevel struct {
+	Seq     int `json:"seq"`
+	Status  int `json:"status"`
+	Content struct {
+		Level int `json:"level"`
 	} `json:"content"`
 }
