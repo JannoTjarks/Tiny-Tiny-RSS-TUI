@@ -10,21 +10,32 @@ import (
 	"os"
 )
 
-var ttrss_api_endpoint string
 var session_id string
-var username string
-var password string
+var config Config
 
 func main() {
-	username = os.Args[1]
-	password = os.Args[2]
-	ttrss_api_endpoint = os.Args[3]
+	readConfig()
 
-	session_id = login(username, password)
+	session_id = login(config.Username, config.Password)
 
 	apiLevel := getApiLevel(session_id)
 
 	fmt.Println(apiLevel)
+}
+
+func readConfig() {
+	file, err := os.Open("./config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
+
+	d := json.NewDecoder(file)
+	err = d.Decode(&config)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func requestApi(values map[string]string) (responseBody []byte) {
@@ -33,7 +44,7 @@ func requestApi(values map[string]string) (responseBody []byte) {
 		log.Fatal(err)
 	}
 
-	resp, err := http.Post(ttrss_api_endpoint, "application/json", bytes.NewBuffer(request_data))
+	resp, err := http.Post(config.Ttrss_Api_Endpoint, "application/json", bytes.NewBuffer(request_data))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,7 +90,7 @@ func isLoggedIn(sid string) (isLoggedIn bool) {
 
 func getApiLevel(session_id string) (currentApiLevel int) {
 	if !isLoggedIn(session_id) {
-		login(username, password)
+		login(config.Username, config.Password)
 	}
 
 	values := map[string]string{"op": "getApiLevel", "sid": session_id}
@@ -95,6 +106,12 @@ func getApiLevel(session_id string) (currentApiLevel int) {
 
 	currentApiLevel = apiLevel.Content.Level
 	return
+}
+
+type Config struct {
+	Username           string `json:"username"`
+	Password           string `json:"password"`
+	Ttrss_Api_Endpoint string `json:"ttrss_api_endpoint"`
 }
 
 type LoginResponse struct {
