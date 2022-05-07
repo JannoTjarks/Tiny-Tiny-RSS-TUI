@@ -11,13 +11,14 @@ import (
 )
 
 var ttrss_api_endpoint string
+var session_id string
 
 func main() {
 	user := os.Args[1]
 	password := os.Args[2]
 	ttrss_api_endpoint = os.Args[3]
-	sid := login(user, password)
-	isLoggedIn := isLoggedIn(sid)
+	session_id = login(user, password)
+	isLoggedIn := isLoggedIn(session_id)
 	if isLoggedIn {
 		fmt.Println("true")
 	} else {
@@ -61,7 +62,7 @@ func login(user string, password string) (sessionId string) {
 }
 
 func isLoggedIn(sid string) (isLoggedIn bool) {
-	values := map[string]string{"op": "isLoggedIn", "sid": sid}
+	values := map[string]string{"op": "isLoggedIn", "sid": session_id}
 	body := requestApi(values)
 
 	logInfo := LogInfo{}
