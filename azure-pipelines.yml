@@ -10,8 +10,24 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud'
+    organization: 'jannotjarks'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'tiny_tiny_rss_TUI'
+    cliProjectName: 'Tiny Tiny RSS TUI'
+    cliSources: '.'
+    extraProperties: |
+      sonar.exclusions=**/*_test.go
+      
+        sonar.tests=.
+        sonar.test.inclusions=**/*_test.go
+
 - script: |
     go version
     go get -v -t -d ./...
     go build -v .  
   displayName: 'Get dependencies, then build'
+- task: SonarCloudAnalyze@1
