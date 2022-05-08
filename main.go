@@ -10,15 +10,15 @@ import (
 	"os"
 )
 
-var session_id string
+var sessionId string
 var config Config
 
 func main() {
 	readConfig()
 
-	session_id = login(config.Username, config.Password)
+	sessionId = login(config.Username, config.Password)
 
-	apiLevel := getApiLevel(session_id)
+	apiLevel := getApiLevel()
 
 	fmt.Println(apiLevel)
 }
@@ -73,8 +73,8 @@ func login(user string, password string) (sessionId string) {
 	return
 }
 
-func isLoggedIn(sid string) (isLoggedIn bool) {
-	values := map[string]string{"op": "isLoggedIn", "sid": session_id}
+func isLoggedIn() (isLoggedIn bool) {
+	values := map[string]string{"op": "isLoggedIn", "sid": sessionId}
 	body := requestApi(values)
 
 	logInfo := LogInfo{}
@@ -88,12 +88,12 @@ func isLoggedIn(sid string) (isLoggedIn bool) {
 	return
 }
 
-func getApiLevel(session_id string) (currentApiLevel int) {
-	if !isLoggedIn(session_id) {
+func getApiLevel() (currentApiLevel int) {
+	if !isLoggedIn() {
 		login(config.Username, config.Password)
 	}
 
-	values := map[string]string{"op": "getApiLevel", "sid": session_id}
+	values := map[string]string{"op": "getApiLevel", "sid": sessionId}
 
 	body := requestApi(values)
 
