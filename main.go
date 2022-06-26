@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/rivo/tview"
 	"io"
 	"log"
 	"net/http"
@@ -21,6 +22,15 @@ func main() {
 	apiLevel := getApiLevel()
 
 	fmt.Println(apiLevel)
+
+	InitTvView()
+}
+
+func InitTvView() {
+	box := tview.NewBox().SetBorder(true).SetTitle("Tiny Tiny RSS TUI")
+	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
+		panic(err)
+	}
 }
 
 func readConfig() {
