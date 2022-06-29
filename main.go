@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/rivo/tview"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
+
+	"github.com/rivo/tview"
 )
 
 var sessionId string
@@ -56,6 +58,20 @@ func requestApi(values map[string]string) (responseBody []byte) {
 
 	resp, err := http.Post(config.Ttrss_Api_Endpoint, "application/json", bytes.NewBuffer(request_data))
 	if err != nil {
+		if strings.Contains(err.Error(), "no such host") {
+			fmt.Println(config.Ttrss_Api_Endpoint + " was not found!")
+			fmt.Println("There are two things to check:")
+			fmt.Println("\t- Check if the endpoint url is correct")
+			fmt.Println("\t- Check if you are using the correct dns servers")
+			fmt.Println()
+		} else if strings.Contains(err.Error(), "dial tcp: lookup") {
+			fmt.Println(config.Ttrss_Api_Endpoint + " was not resolveable!")
+			fmt.Println("There are two things to check:")
+			fmt.Println("\t- Check the dns configuration on your client")
+			fmt.Println("\t- Check if you have access to the internet")
+			fmt.Println()
+		}
+
 		log.Fatal(err)
 	}
 
