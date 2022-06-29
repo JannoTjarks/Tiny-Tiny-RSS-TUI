@@ -22,8 +22,9 @@ func main() {
 	sessionId = login(config.Username, config.Password)
 
 	apiLevel := getApiLevel()
-
+	categories := getCategories()
 	fmt.Println(apiLevel)
+	fmt.Println(categories)
 
 	InitTvView()
 }
@@ -134,6 +135,26 @@ func getApiLevel() (currentApiLevel int) {
 	return
 }
 
+func getCategories() (currentCategories []Category) {
+	if !isLoggedIn() {
+		login(config.Username, config.Password)
+	}
+
+	values := map[string]string{"op": "getCategories", "sid": sessionId}
+
+	body := requestApi(values)
+
+	categories := Categories{}
+	err := json.Unmarshal(body, &categories)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	currentCategories = categories.Content
+	return
+}
+
 type Config struct {
 	Username           string `json:"username"`
 	Password           string `json:"password"`
@@ -170,4 +191,16 @@ type ApiLevel struct {
 	Content struct {
 		Level int `json:"level"`
 	} `json:"content"`
+}
+
+type Categories struct {
+	Seq     int        `json:"seq"`
+	Status  int        `json:"status"`
+	Content []Category `json:"content"`
+}
+type Category struct {
+	ID      int    `json:"id"`
+	Title   string `json:"title"`
+	Unread  int    `json:"unread"`
+	OrderID int    `json:"order_id,omitempty"`
 }
