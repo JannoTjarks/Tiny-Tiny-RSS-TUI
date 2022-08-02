@@ -71,6 +71,9 @@ func requestApi(values map[string]string) (responseBody []byte) {
 			fmt.Println("\t- Check the dns configuration on your client")
 			fmt.Println("\t- Check if you have access to the internet")
 			fmt.Println()
+		} else if strings.Contains(err.Error(), "unsupported protocol scheme \"\"") {
+			fmt.Println("TTRSS API URL is a missing scheme or is wrong!")
+			fmt.Println()
 		}
 
 		log.Fatal(err)
