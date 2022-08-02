@@ -26,12 +26,34 @@ func main() {
 	fmt.Println(apiLevel)
 	fmt.Println(categories)
 
-	InitTvView()
+	InitTvViewList(categories)
 }
 
 func InitTvView() {
 	box := tview.NewBox().SetBorder(true).SetTitle("Tiny Tiny RSS TUI")
 	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
+		panic(err)
+	}
+}
+
+func InitTvViewList(categories []Category) {
+	list := tview.NewList()
+	var runeForList = 'a'
+
+	for _, category := range categories {
+		list.AddItem(category.Title, "", runeForList, nil)
+		runeForList++
+		// Makes sure, that q is not used as rune for a categoriy
+		if runeForList == 'q' {
+			runeForList++
+		}
+	}
+	app := tview.NewApplication()
+
+	list.AddItem("Quit", "Press to exit", 'q', func() {
+		app.Stop()
+	})
+	if err := app.SetRoot(list, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
 }
