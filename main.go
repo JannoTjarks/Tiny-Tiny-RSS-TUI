@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/rivo/tview"
@@ -41,7 +42,7 @@ func InitTvViewList(categories []Category) {
 	var runeForList = 'a'
 
 	for _, category := range categories {
-		list.AddItem(category.Title, "", runeForList, nil)
+		list.AddItem(category.Title, "Unread articles: "+strconv.Itoa(category.Unread), runeForList, nil)
 		runeForList++
 		// Makes sure, that q is not used as rune for a categoriy
 		if runeForList == 'q' {
